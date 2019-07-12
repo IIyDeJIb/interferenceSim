@@ -11,7 +11,7 @@ h = 200  # ft
 ct = 1e-6  # psi^-1
 mu = 1  # cp
 B = 1.1  # rb/stb
-
+egrad = 0.4  # psi/ft emulsion gradient
 # Flow rate (simulates flow from formation with a sucker rod pump)
 maxq = 100.  # stb/d
 dq = 1.  # stb/d
@@ -24,13 +24,15 @@ tStart = 0  # hrs
 tEnd = 20 # hrs
 
 # Time of observations after test start
-tObserve = np.linspace(0, 50, 1000)  # hrs
+tObserve = np.linspace(0, 50, 500)  # hrs
 
 # Generate a rate and time change series
-# Sucker Rod Pump
-# q = np.concatenate((np.linspace(0,maxq,int(maxq/dq+1)), np.linspace(maxq-dq,0,int(maxq/dq))))
-# Keep low for some time
+# Scenario 1: Cyclical SRP operation
+# q = np.tile(np.concatenate((np.linspace(0,maxq,int(maxq/dq+1)), np.linspace(maxq-dq,0,int(maxq/dq)))),100)
+
+# Scenario 2: Keep pumped-off
 q = np.concatenate((np.linspace(0,maxq,int(maxq/dq+1)), np.repeat(maxq,10*int(maxq/dq+1)),np.linspace(maxq-dq,0,int(maxq/dq))))
+
 tSched = np.linspace(tStart, tEnd, len(q) - 1)  # hrs
 
 # Calculate difference arrays for q and t for superposition calculations
@@ -55,8 +57,8 @@ plt.title('Testing Well')
 plt.xlabel('Time, hrs')
 plt.ylabel('Flow Rate, stb/d')
 plt.subplot(212)
-plt.plot(dp)
+plt.plot(dp/egrad)
 plt.title('Observation Well')
 plt.xlabel('Time, hrs')
-plt.ylabel('Pressure, psi')
+plt.ylabel('Fluid level change, ft')
 plt.show()
